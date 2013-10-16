@@ -1,4 +1,5 @@
-function! pulse#PulseCursorLine()
+function! search_pulse#PulseCursorLine()
+    let cursorLineOldColor = synIDattr(synIDtrans(hlID('CursorLine')), 'bg')
     " Color list:
     " http://vim.wikia.com/wiki/Xterm256_color_names_for_console_Vim
     let colorList = [
@@ -24,6 +25,6 @@ function! pulse#PulseCursorLine()
         execute 'sleep '  . s . 'm'
     endfor
 
-    " Restore my default solarized params
-    highlight CursorLine ctermbg=0
+    " Restore the old cursorline color
+    execute 'highlight CursorLine ctermbg=' . cursorLineOldColor
 endfunction
