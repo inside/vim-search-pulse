@@ -2,6 +2,7 @@ function! search_pulse#PulseCursorLine()
     let cursorLineOldColor = synIDattr(synIDtrans(hlID('CursorLine')), 'bg')
     " Color list:
     " http://vim.wikia.com/wiki/Xterm256_color_names_for_console_Vim
+    " http://www.calmar.ws/vim/256-xterm-24bit-rgb-color-chart.html
     let colorList = [
                 \'237',
                 \'238',
