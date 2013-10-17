@@ -5,5 +5,11 @@
 
 " Initial code from:
 " https://github.com/LStinson/Vim/blob/master/plugin/pulse.vim
-nnoremap <silent>n nzv:call search_pulse#PulseCursorLine()<cr>
-nnoremap <silent>N Nzv:call search_pulse#PulseCursorLine()<cr>
+nnoremap
+            \ <script>
+            \ <Plug>PulseCursorLine
+            \ <SID>PulseCursorLine
+nnoremap
+            \ <silent>
+            \ <SID>PulseCursorLine
+            \ :call search_pulse#PulseCursorLine()<cr>
