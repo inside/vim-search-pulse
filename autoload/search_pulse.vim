@@ -30,10 +30,24 @@ function! search_pulse#initialize()
     let g:search_pulse#initialized = 1
 endfunction
 
+" Will pulse the cursor line on first search match using / or ?
+function! search_pulse#PulseFirst()
+    let t = getcmdtype()
+
+    if t == '/' || t == '?'
+        return "\<cr>:call search_pulse#PulseCursorLine()\<cr>"
+    endif
+
+    return "\<cr>"
+endfunction
+
 function! search_pulse#PulseCursorLine()
     if g:search_pulse#initialized == 0
         call search_pulse#initialize()
     endif
+
+    " Open folds
+    normal zv
 
     for c in g:search_pulse#iterator
         let char = getchar(1)

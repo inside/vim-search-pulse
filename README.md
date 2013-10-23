@@ -19,7 +19,10 @@ file.
 
 ## Suggested ~/.vimrc mappings
 
-    nmap n nzv<Plug>PulseCursorLine
-    nmap N Nzv<Plug>PulseCursorLine
-    nmap * *zv<Plug>PulseCursorLine
-    nmap # #zv<Plug>PulseCursorLine
+    nmap n n<Plug>PulseCursorLine
+    nmap N N<Plug>PulseCursorLine
+    nmap * *<Plug>PulseCursorLine
+    nmap # #<Plug>PulseCursorLine
+    " Pulses cursor line on first match
+    " when doing search with / or ?
+    cmap <enter> <Plug>PulseFirst

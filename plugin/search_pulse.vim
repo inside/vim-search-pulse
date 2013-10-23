@@ -13,3 +13,12 @@ nnoremap
             \ <silent>
             \ <SID>PulseCursorLine
             \ :call search_pulse#PulseCursorLine()<cr>
+cnoremap
+            \ <script>
+            \ <Plug>PulseFirst
+            \ <SID>PulseFirst
+cnoremap
+            \ <silent>
+            \ <expr>
+            \ <SID>PulseFirst
+            \ search_pulse#PulseFirst()
