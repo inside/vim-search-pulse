@@ -1,39 +1,57 @@
-function! search_pulse#PulseCursorLine()
-    let oldc = synIDattr(synIDtrans(hlID('CursorLine')), 'bg')
+let g:search_pulse#initialized = 0
+
+function! search_pulse#initialize()
     " Color list:
     " http://vim.wikia.com/wiki/Xterm256_color_names_for_console_Vim
     " http://www.calmar.ws/vim/256-xterm-24bit-rgb-color-chart.html
-    let colorList = [
-                \'237',
-                \'238',
-                \'239',
-                \'240',
-                \'241'
-                \]
-    " Approximative pulse duration in milliseconds
-    let d = 80.0
-    let reversed = reverse(copy(colorList))
-    let iterator = colorList + reversed[1:]
-    " Sleep between each iteration
-    let s = float2nr(round(d / len(iterator))) . 'm'
+    if exists('g:vim_search_pulse_color_list') &&
+                \ type(g:vim_search_pulse_color_list) == 3
+        let colorList = g:vim_search_pulse_color_list
+    else
+        let colorList = [237, 238, 239, 240, 241]
+    endif
 
-    for c in iterator
+    " Approximative pulse duration in milliseconds
+    if exists('g:vim_search_pulse_duration') &&
+                \ type(g:vim_search_pulse_duration) == 0
+        let duration = g:vim_search_pulse_duration
+    else
+        let duration = 200
+    endif
+
+    let g:search_pulse#oldc =
+                \ synIDattr(synIDtrans(hlID('CursorLine')), 'bg')
+    let g:search_pulse#iterator =
+                \ colorList +
+                \ reverse(copy(colorList))[1:]
+    let g:search_pulse#sleep =
+                \ duration /
+                \ len(g:search_pulse#iterator)
+    let g:search_pulse#initialized = 1
+endfunction
+
+function! search_pulse#PulseCursorLine()
+    if g:search_pulse#initialized == 0
+        call search_pulse#initialize()
+    endif
+
+    for c in g:search_pulse#iterator
         let char = getchar(1)
 
         " In the loop, if a key is pressed,
         " restore old cursor line color and exit
         if char != 0
-            call search_pulse#SetCursorLineColor(oldc)
+            call search_pulse#SetCursorLineColor(g:search_pulse#oldc)
             break
         endif
 
         call search_pulse#SetCursorLineColor(c)
         redraw
-        execute 'sleep '  . s . 'm'
+        execute 'sleep ' . g:search_pulse#sleep . 'm'
     endfor
 
     " Restore the old cursorline color
-    call search_pulse#SetCursorLineColor(oldc)
+    call search_pulse#SetCursorLineColor(g:search_pulse#oldc)
 endfunction
 
 function! search_pulse#SetCursorLineColor(c)
