@@ -6,26 +6,26 @@ function! search_pulse#initialize()
     " http://www.calmar.ws/vim/256-xterm-24bit-rgb-color-chart.html
     if exists('g:vim_search_pulse_color_list') &&
                 \ type(g:vim_search_pulse_color_list) == 3
-        let colorList = g:vim_search_pulse_color_list
+        let g:search_pulse#color_list = g:vim_search_pulse_color_list
     else
-        let colorList = [237, 238, 239, 240, 241]
+        let g:search_pulse#color_list = [237, 238, 239, 240, 241]
     endif
 
     " Approximative pulse duration in milliseconds
     if exists('g:vim_search_pulse_duration') &&
                 \ type(g:vim_search_pulse_duration) == 0
-        let duration = g:vim_search_pulse_duration
+        let g:search_pulse#duration = g:vim_search_pulse_duration
     else
-        let duration = 200
+        let g:search_pulse#duration = 200
     endif
 
     let g:search_pulse#oldc =
                 \ synIDattr(synIDtrans(hlID('CursorLine')), 'bg')
     let g:search_pulse#iterator =
-                \ colorList +
-                \ reverse(copy(colorList))[1:]
+                \ g:search_pulse#color_list +
+                \ reverse(copy(g:search_pulse#color_list))[1:]
     let g:search_pulse#sleep =
-                \ duration /
+                \ g:search_pulse#duration /
                 \ len(g:search_pulse#iterator)
     let g:search_pulse#initialized = 1
 endfunction
@@ -41,8 +41,24 @@ function! search_pulse#PulseFirst()
     return "\<cr>"
 endfunction
 
-function! search_pulse#PulseCursorLine()
+function! search_pulse#NeedsInitialization()
     if g:search_pulse#initialized == 0
+        return 1
+    endif
+    if exists('g:vim_search_pulse_color_list')
+                \ && g:vim_search_pulse_color_list != g:search_pulse#color_list
+        return 1
+    endif
+    if exists('g:vim_search_pulse_duration')
+                \ && g:vim_search_pulse_duration != g:search_pulse#duration
+        return 1
+    endif
+
+    return 0
+endfunction
+
+function! search_pulse#PulseCursorLine()
+    if search_pulse#NeedsInitialization()
         call search_pulse#initialize()
     endif
 
