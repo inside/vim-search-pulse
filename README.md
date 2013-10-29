@@ -20,6 +20,20 @@ Use pathogen or a pathogen compatible plugin manager.
 
 ## Configuration
 
+If you want to set your own mappings, do:
+
+    let g:vim_search_pulse_set_mappings = 0
+
+Otherwise the plugin will do the following for you:
+
+    nmap n n<Plug>PulseCursorLine
+    nmap N N<Plug>PulseCursorLine
+    nmap * *<Plug>PulseCursorLine
+    nmap # #<Plug>PulseCursorLine
+    " Pulses cursor line on first match
+    " when doing search with / or ?
+    cmap <enter> <Plug>PulseFirst
+
 The pulse duration is 200 milliseconds by default. You can set your own using
 the following global variable. For example:
 
@@ -33,16 +47,6 @@ You can set your own and as many as you want using the following global
 variable. For example (green scale):
 
     let g:vim_search_pulse_color_list = [22, 28, 34, 40, 46]
-
-## Suggested ~/.vimrc mappings
-
-    nmap n n<Plug>PulseCursorLine
-    nmap N N<Plug>PulseCursorLine
-    nmap * *<Plug>PulseCursorLine
-    nmap # #<Plug>PulseCursorLine
-    " Pulses cursor line on first match
-    " when doing search with / or ?
-    cmap <enter> <Plug>PulseFirst
 
 ## Credits
 

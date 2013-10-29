@@ -22,3 +22,15 @@ cnoremap
             \ <expr>
             \ <SID>PulseFirst
             \ search_pulse#PulseFirst()
+
+if exists('g:vim_search_pulse_set_mappings') == 0 ||
+            \ (exists('g:vim_search_pulse_set_mappings') == 1 &&
+            \ g:vim_search_pulse_set_mappings != 0)
+    nmap n n<Plug>PulseCursorLine
+    nmap N N<Plug>PulseCursorLine
+    nmap * *<Plug>PulseCursorLine
+    nmap # #<Plug>PulseCursorLine
+    " Pulses cursor line on first match
+    " when doing search with / or ?
+    cmap <enter> <Plug>PulseFirst
+endif
