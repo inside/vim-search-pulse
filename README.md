@@ -48,6 +48,10 @@ variable. For example (green scale):
 
     let g:vim_search_pulse_color_list = [22, 28, 34, 40, 46]
 
+If you are using gvim, these are the default colors:
+
+    `['#3a3a3a', '#444444', '#4e4e4e', '#585858', '#606060']`
+
 ## Credits
 
 This plugin is inspired by:

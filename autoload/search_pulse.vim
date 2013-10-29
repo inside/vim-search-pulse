@@ -1,6 +1,8 @@
 let g:search_pulse#initialized = 0
 
 function! search_pulse#initialize()
+    let gui_running = has('gui_running')
+
     " Color list:
     " http://vim.wikia.com/wiki/Xterm256_color_names_for_console_Vim
     " http://www.calmar.ws/vim/256-xterm-24bit-rgb-color-chart.html
@@ -8,7 +10,12 @@ function! search_pulse#initialize()
                 \ type(g:vim_search_pulse_color_list) == 3
         let g:search_pulse#color_list = g:vim_search_pulse_color_list
     else
-        let g:search_pulse#color_list = [237, 238, 239, 240, 241]
+        if gui_running == 1
+            let g:search_pulse#color_list = ['#3a3a3a', '#444444', '#4e4e4e',
+                        \ '#585858', '#606060']
+        else
+            let g:search_pulse#color_list = [237, 238, 239, 240, 241]
+        endif
     endif
 
     " Approximative pulse duration in milliseconds
@@ -17,6 +24,12 @@ function! search_pulse#initialize()
         let g:search_pulse#duration = g:vim_search_pulse_duration
     else
         let g:search_pulse#duration = 200
+    endif
+
+    if gui_running
+        let g:search_pulse#highlight_arg = 'guibg'
+    else
+        let g:search_pulse#highlight_arg = 'ctermbg'
     endif
 
     let g:search_pulse#oldc =
@@ -85,5 +98,5 @@ function! search_pulse#PulseCursorLine()
 endfunction
 
 function! search_pulse#SetCursorLineColor(c)
-    execute 'highlight CursorLine ctermbg=' . a:c
+    execute 'highlight CursorLine ' . g:search_pulse#highlight_arg . '=' . a:c
 endfunction
