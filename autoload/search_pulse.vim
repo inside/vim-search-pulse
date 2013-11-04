@@ -34,6 +34,11 @@ function! search_pulse#initialize()
 
     let g:search_pulse#oldc =
                 \ synIDattr(synIDtrans(hlID('CursorLine')), 'bg')
+
+    if g:search_pulse#oldc == -1
+        let g:search_pulse#oldc = 'NONE'
+    endif
+
     let g:search_pulse#iterator =
                 \ g:search_pulse#color_list +
                 \ reverse(copy(g:search_pulse#color_list))[1:]
