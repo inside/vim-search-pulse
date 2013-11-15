@@ -76,6 +76,9 @@ function! search_pulse#NeedsInitialization()
 endfunction
 
 function! search_pulse#PulseCursorLine()
+    if search_pulse#IsLineTooLong()
+        return
+    endif
     if search_pulse#NeedsInitialization()
         call search_pulse#initialize()
     endif
@@ -104,4 +107,15 @@ endfunction
 
 function! search_pulse#SetCursorLineColor(c)
     execute 'highlight CursorLine ' . g:search_pulse#highlight_arg . '=' . a:c
+endfunction
+
+" If the line has too many characters don't pulse, because it can be slow on
+" very long lines.
+function! search_pulse#IsLineTooLong()
+    let cc = len(getline('.')) " Current line charecter count
+    let ww = winwidth(0) " Current window width
+    " Imagine you have wrapped lines, this is the line count
+    let lc = ceil((cc * 1.0) / (ww * 1.0))
+
+    return lc >= 3.0
 endfunction
