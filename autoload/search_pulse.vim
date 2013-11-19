@@ -79,12 +79,19 @@ function! search_pulse#PulseCursorLine()
     if search_pulse#IsLineTooLong()
         return
     endif
+    if search_pulse#IsPatternOnTheSameLine()
+        return
+    endif
     if search_pulse#NeedsInitialization()
         call search_pulse#initialize()
     endif
 
     " Open folds
     normal zv
+
+    " Save the line we are on to avoid pulsing the same line if pattern is on
+    " the same line.
+    let g:vim_search_pulse_old_line = line('.')
 
     for c in g:search_pulse#iterator
         let char = getchar(1)
@@ -118,4 +125,8 @@ function! search_pulse#IsLineTooLong()
     let lc = ceil((cc * 1.0) / (ww * 1.0))
 
     return lc >= 3.0
+endfunction
+
+function! search_pulse#IsPatternOnTheSameLine()
+    return g:vim_search_pulse_old_line == line('.')
 endfunction

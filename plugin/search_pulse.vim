@@ -23,6 +23,9 @@ cnoremap
             \ <SID>PulseFirst
             \ search_pulse#PulseFirst()
 
+" Set a global variable (not autoloaded) to track the line position
+let g:vim_search_pulse_old_line = line('.')
+
 if exists('g:vim_search_pulse_set_mappings') == 0 ||
             \ (exists('g:vim_search_pulse_set_mappings') == 1 &&
             \ g:vim_search_pulse_set_mappings != 0)
