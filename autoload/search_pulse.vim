@@ -128,5 +128,11 @@ function! search_pulse#IsLineTooLong()
 endfunction
 
 function! search_pulse#IsPatternOnTheSameLine()
+    if !exists('g:vim_search_pulse_old_line')
+        let g:vim_search_pulse_old_line = line('.')
+
+        return 0
+    endif
+
     return g:vim_search_pulse_old_line == line('.')
 endfunction
