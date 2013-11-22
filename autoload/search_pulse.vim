@@ -26,6 +26,11 @@ function! search_pulse#initialize()
         let g:search_pulse#duration = 200
     endif
 
+    " Mode can be cursor_line, pattern
+    if !exists('g:vim_search_pulse_mode')
+        let g:vim_search_pulse_mode = 'cursor_line'
+    endif
+
     if gui_running
         let g:search_pulse#highlight_arg = 'guibg'
     else
@@ -53,7 +58,7 @@ function! search_pulse#PulseFirst()
     let t = getcmdtype()
 
     if t == '/' || t == '?'
-        return "\<cr>:call search_pulse#PulseCursorLine()\<cr>"
+        return "\<cr>:call search_pulse#Pulse()\<cr>"
     endif
 
     return "\<cr>"
@@ -75,15 +80,50 @@ function! search_pulse#NeedsInitialization()
     return 0
 endfunction
 
+function! search_pulse#Pulse()
+    if search_pulse#NeedsInitialization()
+        call search_pulse#initialize()
+    endif
+    if g:vim_search_pulse_mode == 'pattern'
+        call search_pulse#PulsePattern()
+    elseif g:vim_search_pulse_mode == 'cursor_line'
+        call search_pulse#PulseCursorLine()
+    endif
+endfunction
+
+function! search_pulse#PulsePattern()
+    let pos     = getpos('.')
+    let pattern = '\%' . pos[1] . 'l\%' . pos[2] . 'c' . getreg('/')
+
+    if &ignorecase == 1 || &smartcase == 1
+        let pattern = pattern . '\c'
+    endif
+
+    " Open folds
+    normal zv
+
+    for c in g:search_pulse#iterator
+        let match_id = search_pulse#SetPatternColor(c, pattern)
+        redraw
+
+        " In the loop, if a key is pressed,
+        " removes match highlight and break
+        if getchar(1) != 0
+            call matchdelete(match_id)
+            break
+        endif
+
+        execute 'sleep ' . g:search_pulse#sleep . 'm'
+        call matchdelete(match_id)
+    endfor
+endfunction
+
 function! search_pulse#PulseCursorLine()
     if search_pulse#IsLineTooLong()
         return
     endif
     if search_pulse#IsPatternOnTheSameLine()
         return
-    endif
-    if search_pulse#NeedsInitialization()
-        call search_pulse#initialize()
     endif
 
     " Open folds
@@ -94,11 +134,9 @@ function! search_pulse#PulseCursorLine()
     let g:vim_search_pulse_old_line = line('.')
 
     for c in g:search_pulse#iterator
-        let char = getchar(1)
-
         " In the loop, if a key is pressed,
-        " restore old cursor line color and exit
-        if char != 0
+        " restore old cursor line color and break
+        if getchar(1) != 0
             call search_pulse#SetCursorLineColor(g:search_pulse#oldc)
             break
         endif
@@ -114,6 +152,12 @@ endfunction
 
 function! search_pulse#SetCursorLineColor(c)
     execute 'highlight CursorLine ' . g:search_pulse#highlight_arg . '=' . a:c
+endfunction
+
+function! search_pulse#SetPatternColor(c, pattern)
+    execute 'highlight SearchPulse ' . g:search_pulse#highlight_arg . '=' . a:c
+
+    return matchadd('SearchPulse', a:pattern)
 endfunction
 
 " If the line has too many characters don't pulse, because it can be slow on

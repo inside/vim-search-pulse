@@ -7,12 +7,12 @@
 " https://github.com/LStinson/Vim/blob/master/plugin/pulse.vim
 nnoremap
             \ <script>
-            \ <Plug>PulseCursorLine
-            \ <SID>PulseCursorLine
+            \ <Plug>Pulse
+            \ <SID>Pulse
 nnoremap
             \ <silent>
-            \ <SID>PulseCursorLine
-            \ :call search_pulse#PulseCursorLine()<cr>
+            \ <SID>Pulse
+            \ :call search_pulse#Pulse()<cr>
 cnoremap
             \ <script>
             \ <Plug>PulseFirst
@@ -26,10 +26,10 @@ cnoremap
 if exists('g:vim_search_pulse_set_mappings') == 0 ||
             \ (exists('g:vim_search_pulse_set_mappings') == 1 &&
             \ g:vim_search_pulse_set_mappings != 0)
-    nmap n n<Plug>PulseCursorLine
-    nmap N N<Plug>PulseCursorLine
-    nmap * *<Plug>PulseCursorLine
-    nmap # #<Plug>PulseCursorLine
+    nmap n n<Plug>Pulse
+    nmap N N<Plug>Pulse
+    nmap * *<Plug>Pulse
+    nmap # #<Plug>Pulse
     " Pulses cursor line on first match
     " when doing search with / or ?
     cmap <enter> <Plug>PulseFirst
