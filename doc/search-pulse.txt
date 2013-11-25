@@ -38,6 +38,14 @@ file.
 ==============================================================================
 2. Configuration                                   *SearchPulseConfiguration*
 
+Sets whether the cursor line pulses (default is cursor_line):
+
+    let g:vim_search_pulse_mode = 'cursor_line'
+
+or just the search pattern:
+
+    let g:vim_search_pulse_mode = 'pattern'
+
 If you want to set your own mappings, do:
 
     let g:vim_search_pulse_set_mappings = 0

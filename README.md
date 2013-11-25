@@ -3,8 +3,8 @@
 ## Description
 
 When you perform a search, the cursor jumps to the closest match. It's often
-hard to locate it's new position. With this plugin the cursor line will "pulse"
-thus requiring your eyes attention.
+hard to locate it's new position. With this plugin the cursor line (by default)
+or the search pattern will "pulse" thus requiring your eyes attention.
 
 For the cursor line to be set only in the active window you may want to install
 this plugin: https://github.com/vim-scripts/CursorLineCurrentWindow
@@ -19,6 +19,14 @@ file.
 Use pathogen or a pathogen compatible plugin manager.
 
 ## Configuration
+
+Sets whether the cursor line pulses (default is cursor_line):
+
+    let g:vim_search_pulse_mode = 'cursor_line'
+
+or just the search pattern:
+
+    let g:vim_search_pulse_mode = 'pattern'
 
 If you want to set your own mappings, do:
 
