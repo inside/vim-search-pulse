@@ -6,24 +6,15 @@ function! search_pulse#initialize()
     " Color list:
     " http://vim.wikia.com/wiki/Xterm256_color_names_for_console_Vim
     " http://www.calmar.ws/vim/256-xterm-24bit-rgb-color-chart.html
-    if exists('g:vim_search_pulse_color_list') &&
-                \ type(g:vim_search_pulse_color_list) == 3
-        let g:search_pulse#color_list = g:vim_search_pulse_color_list
-    else
-        if gui_running == 1
-            let g:search_pulse#color_list = ['#3a3a3a', '#444444', '#4e4e4e',
-                        \ '#585858', '#606060']
-        else
-            let g:search_pulse#color_list = [237, 238, 239, 240, 241]
-        endif
+    if !exists('g:vim_search_pulse_color_list')
+        let g:vim_search_pulse_color_list = gui_running ?
+                    \ ['#3a3a3a', '#444444', '#4e4e4e', '#585858', '#606060'] :
+                    \ [237, 238, 239, 240, 241]
     endif
 
     " Approximative pulse duration in milliseconds
-    if exists('g:vim_search_pulse_duration') &&
-                \ type(g:vim_search_pulse_duration) == 0
-        let g:search_pulse#duration = g:vim_search_pulse_duration
-    else
-        let g:search_pulse#duration = 200
+    if !exists('g:vim_search_pulse_duration')
+        let g:vim_search_pulse_duration = 200
     endif
 
     " Mode can be cursor_line, pattern
@@ -31,24 +22,21 @@ function! search_pulse#initialize()
         let g:vim_search_pulse_mode = 'cursor_line'
     endif
 
-    if gui_running
-        let g:search_pulse#highlight_arg = 'guibg'
-    else
-        let g:search_pulse#highlight_arg = 'ctermbg'
-    endif
+    let g:search_pulse#highlight_arg = gui_running ?
+                \ 'guibg' :
+                \ 'ctermbg'
 
-    let g:search_pulse#oldc =
-                \ synIDattr(synIDtrans(hlID('CursorLine')), 'bg')
+    let g:search_pulse#oldc = synIDattr(synIDtrans(hlID('CursorLine')), 'bg')
 
     if g:search_pulse#oldc == -1
         let g:search_pulse#oldc = 'NONE'
     endif
 
     let g:search_pulse#iterator =
-                \ g:search_pulse#color_list +
-                \ reverse(copy(g:search_pulse#color_list))[1:]
+                \ g:vim_search_pulse_color_list +
+                \ reverse(copy(g:vim_search_pulse_color_list))[1:]
     let g:search_pulse#sleep =
-                \ g:search_pulse#duration /
+                \ g:vim_search_pulse_duration /
                 \ len(g:search_pulse#iterator)
     let g:search_pulse#initialized = 1
 endfunction
@@ -66,14 +54,6 @@ endfunction
 
 function! search_pulse#NeedsInitialization()
     if g:search_pulse#initialized == 0
-        return 1
-    endif
-    if exists('g:vim_search_pulse_color_list')
-                \ && g:vim_search_pulse_color_list != g:search_pulse#color_list
-        return 1
-    endif
-    if exists('g:vim_search_pulse_duration')
-                \ && g:vim_search_pulse_duration != g:search_pulse#duration
         return 1
     endif
 
