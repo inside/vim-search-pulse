@@ -12,7 +12,11 @@ this plugin: https://github.com/vim-scripts/CursorLineCurrentWindow
 Activate the cursor line highlighing by putting `set cursorline` in your .vimrc
 file.
 
-![Search pulse demo](http://i.imgur.com/ukZuti2.gif)
+### Cursor line pulse animation:
+![cursor line pulse](http://i.imgur.com/ukZuti2.gif)
+
+### Pattern pulse animation:
+![pattern pulse](http://i.imgur.com/jFyjW3f.gif)
 
 ## Installation
 
