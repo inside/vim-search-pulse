@@ -61,6 +61,9 @@ function! search_pulse#NeedsInitialization()
 endfunction
 
 function! search_pulse#Pulse()
+    if exists('g:vim_search_pulse_disable') && g:vim_search_pulse_disable == 1
+        return
+    endif
     if search_pulse#NeedsInitialization()
         call search_pulse#initialize()
     endif

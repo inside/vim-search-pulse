@@ -64,6 +64,8 @@ If you are using gvim, these are the default colors:
 
     `['#3a3a3a', '#444444', '#4e4e4e', '#585858', '#606060']`
 
+To disable/enable set the value of `g:vim_search_pulse_disable` to 0 or 1
+
 ## Credits
 
 This plugin is inspired by:
