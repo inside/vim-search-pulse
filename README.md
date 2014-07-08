@@ -1,4 +1,4 @@
-# The vim search pulse: easily locate the cursor after a search
+# The vim search pulse plugin: easily locate the cursor after a search
 
 ## Description
 
