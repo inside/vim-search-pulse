@@ -1,5 +1,7 @@
 # The vim search pulse
 
+## Easily locate where the cursor is after a search
+
 ## Description
 
 When you perform a search, the cursor jumps to the closest match. It's often
