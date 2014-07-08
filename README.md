@@ -34,7 +34,7 @@ or just the search pattern:
 
 If you want to set your own mappings, do:
 
-    let g:vim_search_pulse_set_mappings = 0
+    let g:vim_search_pulse_disable_auto_mappings = 1
 
 Otherwise the plugin will do the following for you:
 
