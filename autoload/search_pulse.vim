@@ -82,8 +82,11 @@ function! search_pulse#PulsePattern()
         let pattern = pattern . '\c'
     endif
 
-    " Open folds
-    normal zv
+    " The search command is part of a mapping so we have to control opening
+    " folds. See :h 'foldopen'.
+    if &foldopen =~# 'search'
+        normal zv
+    endif
 
     for c in g:search_pulse#iterator
         let match_id = search_pulse#SetPatternColor(c, pattern)
