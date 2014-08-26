@@ -82,11 +82,7 @@ function! search_pulse#PulsePattern()
         let pattern = pattern . '\c'
     endif
 
-    " The search command is part of a mapping so we have to control opening
-    " folds. See :h 'foldopen'.
-    if &foldopen =~# 'search'
-        normal zv
-    endif
+    call search_pulse#handleFoldOpening()
 
     for c in g:search_pulse#iterator
         let match_id = search_pulse#SetPatternColor(c, pattern)
@@ -112,8 +108,7 @@ function! search_pulse#PulseCursorLine()
         return
     endif
 
-    " Open folds
-    normal zv
+    call search_pulse#handleFoldOpening()
 
     " Save the line we are on to avoid pulsing the same line if pattern is on
     " the same line.
@@ -165,4 +160,12 @@ function! search_pulse#IsPatternOnTheSameLine()
     endif
 
     return g:vim_search_pulse_old_line == line('.')
+endfunction
+
+function! search_pulse#handleFoldOpening()
+    " The search command is part of a mapping so we have to control opening
+    " folds. See :h 'foldopen'.
+    if &foldopen =~# 'search'
+        normal zv
+    endif
 endfunction
