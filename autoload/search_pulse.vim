@@ -1,9 +1,9 @@
 let g:search_pulse#initialized = 0
 
-func! s:scrub_pattern(s)
-  " ^ and $ make no sense for \%l or \%c patterns.
-  return substitute(a:s, '^\^*\(.\{-}\)\$*$', '\1', '')
-endf
+function! search_pulse#scrub_pattern(s)
+    " ^ makes no sense for \%l or \%c patterns.
+    return substitute(a:s, '\v^\^', '\1', '')
+endfunction
 
 function! search_pulse#initialize()
     let gui_running = has('gui_running')
@@ -81,7 +81,10 @@ endfunction
 
 function! search_pulse#PulsePattern()
     let pos     = getpos('.')
-    let pattern = '\%' . pos[1] . 'l\%' . pos[2] . 'c' . s:scrub_pattern(getreg('/'))
+    let pattern =
+                \ '\%' . pos[1] . 'l' .
+                \ '\%' . pos[2] . 'c' .
+                \ search_pulse#scrub_pattern(getreg('/'))
 
     if &ignorecase == 1 || &smartcase == 1
         let pattern = pattern . '\c'
