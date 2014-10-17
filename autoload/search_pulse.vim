@@ -2,7 +2,23 @@ let g:search_pulse#initialized = 0
 
 function! search_pulse#scrub_pattern(s)
     " ^ makes no sense for \%l or \%c patterns.
-    return substitute(a:s, '\v^\^', '\1', '')
+    let scrubbed_pattern = substitute(a:s, '\v^\^', '\1', '')
+
+    " Prevents multiple matches to pulse when using grouping patterns like:
+    " /foo\|bar
+    " Also handles very magic searches:
+    " /\vfoo\|bar
+    " Thanks to:
+    " https://github.com/ivyl/vim-bling/commit/2bd2a7bae53a86d50b5d04b288294126c91ea372#diff-02a7de289c9f8db14e1cd349a2f52fc9
+    let scrubbed_pattern = '\%(' . scrubbed_pattern
+
+    if stridx(a:s, '\v') == 0
+        let scrubbed_pattern .= ')'
+    else
+        let scrubbed_pattern .= '\)'
+    endif
+
+    return scrubbed_pattern
 endfunction
 
 function! search_pulse#initialize()
