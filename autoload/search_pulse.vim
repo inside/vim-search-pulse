@@ -154,10 +154,18 @@ endfunction
 function! search_pulse#IsLineTooLong()
     let cc = len(getline('.')) " Current line charecter count
     let ww = winwidth(0) " Current window width
-    " Imagine you have wrapped lines, this is the line count
-    let lc = ceil((cc * 1.0) / (ww * 1.0))
 
-    return lc >= 3.0
+    " Imagine you have wrapped lines,
+    " the return of the ceil function is the line count
+    if has('gui_macvim')
+        " On macvim handles float regardless of the current locale
+        " 1,0 is a float but 1.0 is a string
+        " see https://groups.google.com/forum/#!topic/vim_mac/zIxXg4az9Eg
+        let f = str2float('1.0')
+        return ceil((cc * f) / (ww * f)) >= str2float('3.0')
+    endif
+
+    return ceil((cc * 1.0) / (ww * 1.0)) >= 3.0
 endfunction
 
 function! search_pulse#IsPatternOnTheSameLine()
