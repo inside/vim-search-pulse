@@ -1,203 +1,186 @@
-let g:search_pulse#initialized = 0
+func! s:ScrubPattern(s)
+  " ^ makes no sense for \%l or \%c patterns.
+  let scrubbed_pattern = substitute(a:s, '\v^\^', '\1', '')
 
-function! search_pulse#scrub_pattern(s)
-    " ^ makes no sense for \%l or \%c patterns.
-    let scrubbed_pattern = substitute(a:s, '\v^\^', '\1', '')
+  " Prevents multiple matches to pulse when using grouping patterns like:
+  " /foo\|bar
+  " Also handles very magic searches:
+  " /\vfoo\|bar
+  " Thanks to:
+  " https://github.com/ivyl/vim-bling/commit/2bd2a7bae53a86d50b5d04b288294126c91ea372#diff-02a7de289c9f8db14e1cd349a2f52fc9
+  let scrubbed_pattern = '\%(' . scrubbed_pattern
 
-    " Prevents multiple matches to pulse when using grouping patterns like:
-    " /foo\|bar
-    " Also handles very magic searches:
-    " /\vfoo\|bar
-    " Thanks to:
-    " https://github.com/ivyl/vim-bling/commit/2bd2a7bae53a86d50b5d04b288294126c91ea372#diff-02a7de289c9f8db14e1cd349a2f52fc9
-    let scrubbed_pattern = '\%(' . scrubbed_pattern
+  if stridx(a:s, '\v') == 0
+    let scrubbed_pattern .= ')'
+  else
+    let scrubbed_pattern .= '\)'
+  endif
 
-    if stridx(a:s, '\v') == 0
-        let scrubbed_pattern .= ')'
-    else
-        let scrubbed_pattern .= '\)'
-    endif
+  return scrubbed_pattern
+endf
 
-    return scrubbed_pattern
-endfunction
+func! s:Initialize()
+  let gui_running = has('gui_running')
 
-function! search_pulse#initialize()
-    let gui_running = has('gui_running')
+  " Color list:
+  " http://vim.wikia.com/wiki/Xterm256_color_names_for_console_Vim
+  " http://www.calmar.ws/vim/256-xterm-24bit-rgb-color-chart.html
+  let color_list =  gui_running ?
+        \ ['#3a3a3a', '#444444', '#4e4e4e', '#585858', '#606060'] :
+        \ [237, 238, 239, 240, 241]
 
-    " Color list:
-    " http://vim.wikia.com/wiki/Xterm256_color_names_for_console_Vim
-    " http://www.calmar.ws/vim/256-xterm-24bit-rgb-color-chart.html
-    if !exists('g:vim_search_pulse_color_list')
-        let g:vim_search_pulse_color_list = gui_running ?
-                    \ ['#3a3a3a', '#444444', '#4e4e4e', '#585858', '#606060'] :
-                    \ [237, 238, 239, 240, 241]
-    endif
+  let g:vim_search_pulse_color_list =
+        \ get(g:, 'vim_search_pulse_color_list', color_list)
 
-    " Approximative pulse duration in milliseconds
-    if !exists('g:vim_search_pulse_duration')
-        let g:vim_search_pulse_duration = 200
-    endif
+  " Approximative pulse duration in milliseconds
+  let g:vim_search_pulse_duration = get(g:, 'vim_search_pulse_duration', 200)
 
-    " Mode can be cursor_line, pattern
-    if !exists('g:vim_search_pulse_mode')
-        let g:vim_search_pulse_mode = 'cursor_line'
-    endif
+  " Mode can be cursor_line, pattern
+  let g:vim_search_pulse_mode =
+        \ get(g:, 'vim_search_pulse_mode', 'cursor_line')
 
-    let g:search_pulse#highlight_arg = gui_running ?
-                \ 'guibg' :
-                \ 'ctermbg'
+  let s:highlight_arg = gui_running ? 'guibg' : 'ctermbg'
+  let s:oldc = synIDattr(synIDtrans(hlID('CursorLine')), 'bg')
 
-    let g:search_pulse#oldc = synIDattr(synIDtrans(hlID('CursorLine')), 'bg')
+  if s:oldc == -1
+    let s:oldc = 'NONE'
+  endif
 
-    if g:search_pulse#oldc == -1
-        let g:search_pulse#oldc = 'NONE'
-    endif
-
-    let g:search_pulse#iterator =
-                \ g:vim_search_pulse_color_list +
-                \ reverse(copy(g:vim_search_pulse_color_list))[1:]
-    let g:search_pulse#sleep =
-                \ g:vim_search_pulse_duration /
-                \ len(g:search_pulse#iterator)
-    let g:search_pulse#initialized = 1
-endfunction
+  let s:iterator =
+        \ g:vim_search_pulse_color_list +
+        \ reverse(copy(g:vim_search_pulse_color_list))[1:]
+  let s:sleep = g:vim_search_pulse_duration / len(s:iterator)
+  let s:initialized = 1
+endf
 
 " Will pulse the cursor line on first search match using / or ?
-function! search_pulse#PulseFirst()
-    let t = getcmdtype()
+func! search_pulse#PulseFirst()
+  let t = getcmdtype()
 
-    if t == '/' || t == '?'
-        return "\<cr>:call search_pulse#Pulse()\<cr>"
+  if t == '/' || t == '?'
+    return "\<cr>:call search_pulse#Pulse()\<cr>"
+  endif
+
+  return "\<cr>"
+endf
+
+func! search_pulse#Pulse()
+  if get(g:, 'vim_search_pulse_disable') != 0
+    return
+  endif
+  if get(s:, 'initialized') == 0
+    call s:Initialize()
+  endif
+  if g:vim_search_pulse_mode == 'pattern'
+    call search_pulse#PulsePattern()
+  elseif g:vim_search_pulse_mode == 'cursor_line'
+    call search_pulse#PulseCursorLine()
+  endif
+endf
+
+func! search_pulse#PulsePattern()
+  let pos = getpos('.')
+  let pattern =
+        \ '\%' . pos[1] . 'l' .
+        \ '\%' . pos[2] . 'c' .
+        \ s:ScrubPattern(getreg('/'))
+
+  if &ignorecase == 1 || &smartcase == 1
+    let pattern = pattern . '\c'
+  endif
+
+  call s:HandleFoldOpening()
+
+  for c in s:iterator
+    let match_id = s:SetPatternColor(c, pattern)
+    redraw
+
+    " In the loop, if a key is pressed,
+    " removes match highlight and break
+    if getchar(1) != 0
+      call matchdelete(match_id)
+      break
     endif
 
-    return "\<cr>"
-endfunction
+    execute 'sleep ' . s:sleep . 'm'
+    call matchdelete(match_id)
+  endfor
+endf
 
-function! search_pulse#NeedsInitialization()
-    if g:search_pulse#initialized == 0
-        return 1
+func! search_pulse#PulseCursorLine()
+  if s:IsLineTooLong()
+    return
+  endif
+  if s:IsPatternOnTheSameLine()
+    return
+  endif
+
+  call s:HandleFoldOpening()
+
+  " Save the line we are on to avoid pulsing the same line if pattern is on
+  " the same line.
+  let s:old_line = line('.')
+
+  for c in s:iterator
+    " In the loop, if a key is pressed,
+    " restore old cursor line color and break
+    if getchar(1) != 0
+      call s:SetCursorLineColor(s:oldc)
+      break
     endif
 
-    return 0
-endfunction
+    call s:SetCursorLineColor(c)
+    redraw
+    execute 'sleep ' . s:sleep . 'm'
+  endfor
 
-function! search_pulse#Pulse()
-    if exists('g:vim_search_pulse_disable') && g:vim_search_pulse_disable == 1
-        return
-    endif
-    if search_pulse#NeedsInitialization()
-        call search_pulse#initialize()
-    endif
-    if g:vim_search_pulse_mode == 'pattern'
-        call search_pulse#PulsePattern()
-    elseif g:vim_search_pulse_mode == 'cursor_line'
-        call search_pulse#PulseCursorLine()
-    endif
-endfunction
+  " Restore the old cursorline color
+  call s:SetCursorLineColor(s:oldc)
+endf
 
-function! search_pulse#PulsePattern()
-    let pos     = getpos('.')
-    let pattern =
-                \ '\%' . pos[1] . 'l' .
-                \ '\%' . pos[2] . 'c' .
-                \ search_pulse#scrub_pattern(getreg('/'))
+func! s:SetCursorLineColor(c)
+  execute 'highlight CursorLine ' . s:highlight_arg . '=' . a:c
+endf
 
-    if &ignorecase == 1 || &smartcase == 1
-        let pattern = pattern . '\c'
-    endif
+func! s:SetPatternColor(c, pattern)
+  execute 'highlight SearchPulse ' . s:highlight_arg . '=' . a:c
 
-    call search_pulse#handleFoldOpening()
-
-    for c in g:search_pulse#iterator
-        let match_id = search_pulse#SetPatternColor(c, pattern)
-        redraw
-
-        " In the loop, if a key is pressed,
-        " removes match highlight and break
-        if getchar(1) != 0
-            call matchdelete(match_id)
-            break
-        endif
-
-        execute 'sleep ' . g:search_pulse#sleep . 'm'
-        call matchdelete(match_id)
-    endfor
-endfunction
-
-function! search_pulse#PulseCursorLine()
-    if search_pulse#IsLineTooLong()
-        return
-    endif
-    if search_pulse#IsPatternOnTheSameLine()
-        return
-    endif
-
-    call search_pulse#handleFoldOpening()
-
-    " Save the line we are on to avoid pulsing the same line if pattern is on
-    " the same line.
-    let g:vim_search_pulse_old_line = line('.')
-
-    for c in g:search_pulse#iterator
-        " In the loop, if a key is pressed,
-        " restore old cursor line color and break
-        if getchar(1) != 0
-            call search_pulse#SetCursorLineColor(g:search_pulse#oldc)
-            break
-        endif
-
-        call search_pulse#SetCursorLineColor(c)
-        redraw
-        execute 'sleep ' . g:search_pulse#sleep . 'm'
-    endfor
-
-    " Restore the old cursorline color
-    call search_pulse#SetCursorLineColor(g:search_pulse#oldc)
-endfunction
-
-function! search_pulse#SetCursorLineColor(c)
-    execute 'highlight CursorLine ' . g:search_pulse#highlight_arg . '=' . a:c
-endfunction
-
-function! search_pulse#SetPatternColor(c, pattern)
-    execute 'highlight SearchPulse ' . g:search_pulse#highlight_arg . '=' . a:c
-
-    return matchadd('SearchPulse', a:pattern)
-endfunction
+  return matchadd('SearchPulse', a:pattern)
+endf
 
 " If the line has too many characters don't pulse, because it can be slow on
 " very long lines.
-function! search_pulse#IsLineTooLong()
-    let cc = len(getline('.')) " Current line charecter count
-    let ww = winwidth(0) " Current window width
+func! s:IsLineTooLong()
+  let cc = len(getline('.')) " Current line charecter count
+  let ww = winwidth(0) " Current window width
 
-    " Imagine you have wrapped lines,
-    " the return of the ceil function is the line count
-    if has('gui_macvim')
-        " On macvim handles float regardless of the current locale
-        " 1,0 is a float but 1.0 is a string
-        " see https://groups.google.com/forum/#!topic/vim_mac/zIxXg4az9Eg
-        let f = str2float('1.0')
-        return ceil((cc * f) / (ww * f)) >= str2float('3.0')
-    endif
+  " Imagine you have wrapped lines,
+  " the return of the ceil function is the line count
+  if has('gui_macvim')
+    " On macvim handles float regardless of the current locale
+    " 1,0 is a float but 1.0 is a string
+    " see https://groups.google.com/forum/#!topic/vim_mac/zIxXg4az9Eg
+    let f = str2float('1.0')
+    return ceil((cc * f) / (ww * f)) >= str2float('3.0')
+  endif
 
-    return ceil((cc * 1.0) / (ww * 1.0)) >= 3.0
-endfunction
+  return ceil((cc * 1.0) / (ww * 1.0)) >= 3.0
+endf
 
-function! search_pulse#IsPatternOnTheSameLine()
-    if !exists('g:vim_search_pulse_old_line')
-        let g:vim_search_pulse_old_line = line('.')
+func! s:IsPatternOnTheSameLine()
+  if !exists('s:old_line')
+    let s:old_line = line('.')
 
-        return 0
-    endif
+    return 0
+  endif
 
-    return g:vim_search_pulse_old_line == line('.')
-endfunction
+  return s:old_line == line('.')
+endf
 
-function! search_pulse#handleFoldOpening()
-    " The search command is part of a mapping so we have to control opening
-    " folds. See :h 'foldopen'.
-    if &foldopen =~# 'search'
-        normal zv
-    endif
-endfunction
+func! s:HandleFoldOpening()
+  " The search command is part of a mapping so we have to control opening
+  " folds. See :h 'foldopen'.
+  if &foldopen =~# 'search'
+    normal zv
+  endif
+endf
