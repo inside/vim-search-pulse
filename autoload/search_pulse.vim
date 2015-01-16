@@ -121,10 +121,22 @@ func! search_pulse#PulseCursorLine()
   " the same line.
   let s:old_line = line('.')
 
+  " Saves user defined cursorline opt.
+  " If disabled, we locally enabled it during the pulse.
+  " Otherwise, there's no visible pulse.
+  let cursorline_opt = &cursorline
+
+  if cursorline_opt == 0
+    setlocal cursorline
+  endif
+
   for c in s:iterator
     " In the loop, if a key is pressed,
     " restore old cursor line color and break
     if getchar(1) != 0
+      if cursorline_opt == 0
+        setlocal nocursorline
+      endif
       call s:SetCursorLineColor(s:oldc)
       break
     endif
@@ -133,6 +145,10 @@ func! search_pulse#PulseCursorLine()
     redraw
     execute 'sleep ' . s:sleep . 'm'
   endfor
+
+  if cursorline_opt == 0
+    setlocal nocursorline
+  endif
 
   " Restore the old cursorline color
   call s:SetCursorLineColor(s:oldc)
