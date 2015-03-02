@@ -91,6 +91,17 @@ work with the vim search pulse:
     autocmd! User IncSearchExecute
     autocmd User IncSearchExecute :call search_pulse#Pulse()
 
+## Known bugs
+
+### MacVim
+
+* This redraw bug appears on MacVim when using this plugin, the
+  [vim-bling](https://github.com/ivyl/vim-bling) or any plugin using a redraw
+  loop. It's not plugin, but MacVim related.
+
+  There's a [video describing the bug](https://www.youtube.com/watch?v=miz_Ut8T4)
+  and a [discussion about it](https://groups.google.com/forum/#!topic/vim_mac/z-IBAFHbQak).
+
 ## Credits
 
 This plugin is inspired by:
