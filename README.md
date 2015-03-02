@@ -99,7 +99,7 @@ work with the vim search pulse:
   [vim-bling](https://github.com/ivyl/vim-bling) or any plugin using a redraw
   loop. It's not plugin, but MacVim related.
 
-  There's a [video describing the bug](https://www.youtube.com/watch?v=miz_Ut8T4)
+  There's a [video describing the bug](https://www.youtube.com/watch?v=miz_Ut8T4jk)
   and a [discussion about it](https://groups.google.com/forum/#!topic/vim_mac/z-IBAFHbQak).
 
 ## Credits
