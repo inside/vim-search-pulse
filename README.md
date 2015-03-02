@@ -95,7 +95,7 @@ work with the vim search pulse:
 
 ### MacVim
 
-* This redraw bug appears on MacVim when using this plugin, the
+* A redraw bug appears on MacVim when using this plugin, the
   [vim-bling](https://github.com/ivyl/vim-bling) or any plugin using a redraw
   loop. It's not plugin, but MacVim related.
 
