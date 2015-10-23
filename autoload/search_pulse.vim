@@ -79,10 +79,10 @@ func! search_pulse#Pulse()
 endf
 
 func! search_pulse#PulsePattern()
-  let pos = getpos('.')
+  let [line, col] = s:LocatePattern()
   let pattern =
-        \ '\%' . pos[1] . 'l' .
-        \ '\%' . pos[2] . 'c' .
+        \ '\%' . line . 'l' .
+        \ '\%' . col . 'c' .
         \ s:ScrubPattern(getreg('/'))
 
   if &ignorecase == 1 || &smartcase == 1
@@ -191,6 +191,15 @@ func! s:IsPatternOnTheSameLine()
   endif
 
   return s:old_line == line('.')
+endf
+
+func! s:LocatePattern()
+  " If the cursor isn't on the first char of the pattern, ...
+  if searchpos(getreg('/') . '\c', 'cn', line('.'))[1] != col('.')
+    " ... search backwards for the first char of the pattern.
+    return searchpos(getreg('/') . '\c', 'bn', line('.'))
+  endif
+  return [line('.'), col('.')]
 endf
 
 func! s:HandleFoldOpening()
