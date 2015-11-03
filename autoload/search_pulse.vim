@@ -209,3 +209,15 @@ func! s:HandleFoldOpening()
     normal zv
   endif
 endf
+
+func! s:SearchPulseToggle()
+  if get(g:, 'vim_search_pulse_disable') != 0
+    let g:vim_search_pulse_disable = 0
+    echo 'The Vim Search Pulse is ON'
+  else
+    let g:vim_search_pulse_disable = 1
+    echo 'The Vim Search Pulse is OFF'
+  endif
+endfunc
+
+command! SearchPulseToggle :call s:SearchPulseToggle()

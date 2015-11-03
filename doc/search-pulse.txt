@@ -20,6 +20,7 @@ CONTENTS                                                *SearchPulseContents*
     1. Introduction .......................... |SearchPulseIntroduction|
     2. Configuration ......................... |SearchPulseConfiguration|
     3. Integration with incsearch.vim ........ |SearchPulseIncsearch|
+    4. Commands............................... |SearchPulseCommands|
 
 
 ==============================================================================
@@ -107,3 +108,11 @@ work with the vim search pulse:
     " Pulses the first match after hitting the enter keyan
     autocmd! User IncSearchExecute
     autocmd User IncSearchExecute :call search_pulse#Pulse()
+
+
+==============================================================================
+4. Commands                                             *SearchPulseCommands*
+
+:SearchPulseToggle                                       *:SearchPulseToggle*
+
+Easily switch the search pulse on and off.
