@@ -17,10 +17,12 @@
 ==============================================================================
 CONTENTS                                                *SearchPulseContents*
 
-    1. Introduction .......................... |SearchPulseIntroduction|
-    2. Configuration ......................... |SearchPulseConfiguration|
-    3. Integration with incsearch.vim ........ |SearchPulseIncsearch|
-    4. Commands............................... |SearchPulseCommands|
+    1. Introduction .............................. |SearchPulseIntroduction|
+    2. Configuration ............................. |SearchPulseConfiguration|
+    3. Integration with other plugins ............ |SearchPulseOtherPlugins|
+        3.1. Integration with incsearch.vim ...... |SearchPulseIncsearch|
+        3.2. Integration with vim-asterisk  ...... |SearchPulseVimAsterisk|
+    4. Commands................................... |SearchPulseCommands|
 
 
 ==============================================================================
@@ -84,7 +86,11 @@ To disable/enable set the value of g:vim_search_pulse_disable to 0 or 1
 
 
 ==============================================================================
-3. Integration with incsearch.vim                      *SearchPulseIncsearch*
+3. Integration with other plugins                   *SearchPulseOtherPlugins*
+
+
+------------------------------------------------------------------------------
+3.1. Integration with incsearch.vim                      *SearchPulseIncsearch*
 
 incsearch.vim https://github.com/haya14busa/incsearch.vim provides a very
 nice improved incremental searching. With a little configuration, it can
@@ -108,6 +114,23 @@ work with the vim search pulse:
     " Pulses the first match after hitting the enter keyan
     autocmd! User IncSearchExecute
     autocmd User IncSearchExecute :call search_pulse#Pulse()
+
+
+------------------------------------------------------------------------------
+3.2. Integration with vim-asterisk                   *SearchPulseVimAsterisk*
+
+vim-asterisk https://github.com/haya14busa/vim-asterisk provides improved
+star motions. Here's the configuration:
+
+    let g:vim_search_pulse_disable_auto_mappings = 1
+
+    nmap * <Plug>(asterisk-*)<Plug>Pulse
+    nmap # <Plug>(asterisk-#)<Plug>Pulse
+    nmap n n<Plug>Pulse
+    nmap N N<Plug>Pulse
+    " Pulses cursor line on first match
+    " when doing search with / or ?
+    cmap <enter> <Plug>PulseFirst
 
 
 ==============================================================================
