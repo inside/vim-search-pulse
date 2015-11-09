@@ -126,3 +126,5 @@ This plugin is inspired by:
 * http://redd.it/1o7t2a
 
 The animated gif was created using http://www.cockos.com/licecap/
+
+Thanks to everyone who participated in making this plugin better.
