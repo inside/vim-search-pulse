@@ -11,13 +11,6 @@ nnoremap
 nnoremap
       \ <silent>
       \ <SID>Pulse :call search_pulse#Pulse()<cr>
-cnoremap
-      \ <script>
-      \ <Plug>PulseFirst <SID>PulseFirst
-cnoremap
-      \ <silent>
-      \ <expr>
-      \ <SID>PulseFirst search_pulse#PulseFirst()
 
 if get(g:, 'vim_search_pulse_disable_auto_mappings') != 0
   finish
@@ -29,4 +22,4 @@ nmap * *<Plug>Pulse
 nmap # #<Plug>Pulse
 " Pulses cursor line on first match
 " when doing search with / or ?
-cmap <enter> <Plug>PulseFirst
+cmap <silent> <expr> <enter> search_pulse#PulseFirst()
