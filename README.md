@@ -44,7 +44,7 @@ Otherwise the plugin will do the following for you:
     nmap # #<Plug>Pulse
     " Pulses cursor line on first match
     " when doing search with / or ?
-    cmap <enter> <Plug>PulseFirst
+    cmap <silent> <expr> <enter> search_pulse#PulseFirst()
 
 The pulse duration is 200 milliseconds by default. You can set your own using
 the following global variable. For example:
@@ -104,7 +104,7 @@ star motions. Here's the configuration:
     nmap N N<Plug>Pulse
     " Pulses cursor line on first match
     " when doing search with / or ?
-    cmap <enter> <Plug>PulseFirst
+    cmap <silent> <expr> <enter> search_pulse#PulseFirst()
 
 ## Known bugs
 
