@@ -84,19 +84,6 @@ If you are using gvim, these are the default colors:
 
 To disable/enable set the value of g:vim_search_pulse_disable to 0 or 1
 
-To execute arbitrary commands before and after pulse runs, use these autocmds:
-
-    autocmd User PrePulse
-    autocmd User PostPulse
-
-For example, to turn on cursorcolumn during the pulse and then off right after:
-
-    augroup Pulse
-        autocmd! User PrePulse
-        autocmd! User PostPulse
-        autocmd  User PrePulse  set cursorcolumn
-        autocmd  User PostPulse set nocursorcolumn
-    augroup END
 
 ==============================================================================
 3. Integration with other plugins                   *SearchPulseOtherPlugins*
