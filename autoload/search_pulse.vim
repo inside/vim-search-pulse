@@ -71,13 +71,11 @@ func! search_pulse#Pulse()
   if get(s:, 'initialized') == 0
     call s:Initialize()
   endif
-  doautocmd <nomodeline> User PrePulse
   if g:vim_search_pulse_mode == 'pattern'
     call search_pulse#PulsePattern()
   elseif g:vim_search_pulse_mode == 'cursor_line'
     call search_pulse#PulseCursorLine()
   endif
-  doautocmd <nomodeline> User PostPulse
 endf
 
 func! search_pulse#PulsePattern()
