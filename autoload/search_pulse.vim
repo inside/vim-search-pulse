@@ -71,10 +71,16 @@ func! search_pulse#Pulse()
   if get(s:, 'initialized') == 0
     call s:Initialize()
   endif
+  if has('patch-7.3.438')
+    silent doautocmd <nomodeline> User PrePulse
+  endif
   if g:vim_search_pulse_mode == 'pattern'
     call search_pulse#PulsePattern()
   elseif g:vim_search_pulse_mode == 'cursor_line'
     call search_pulse#PulseCursorLine()
+  endif
+  if has('patch-7.3.438')
+    silent doautocmd <nomodeline> User PostPulse
   endif
 endf
 
