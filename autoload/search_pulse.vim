@@ -20,7 +20,7 @@ func! s:ScrubPattern(s)
 endf
 
 func! s:Initialize()
-  let gui_running = has('gui_running')
+  let gui_running = has('gui_running') || has('nvim')
 
   " Color list:
   " http://vim.wikia.com/wiki/Xterm256_color_names_for_console_Vim
