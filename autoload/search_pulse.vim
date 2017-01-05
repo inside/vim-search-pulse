@@ -47,7 +47,7 @@ func! s:Initialize()
   let s:highlight_arg = gui_running ? 'guibg' : 'ctermbg'
   let s:oldc = synIDattr(synIDtrans(hlID('CursorLine')), 'bg')
 
-  if s:oldc == -1
+  if s:oldc == -1 || s:oldc == ''
     let s:oldc = 'NONE'
   endif
 
