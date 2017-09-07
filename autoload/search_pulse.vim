@@ -195,6 +195,9 @@ func! s:IsLineTooLong()
 endf
 
 func! s:IsPatternOnTheSameLine()
+  if !g:vim_search_pulse_disable_if_same_line_pattern
+      return
+  endif
   if !exists('s:old_line')
     let s:old_line = line('.')
 
