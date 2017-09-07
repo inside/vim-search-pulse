@@ -27,3 +27,24 @@ nmap # #<Plug>Pulse
 " Pulses cursor line on first match
 " when doing search with / or ?
 cmap <silent> <expr> <enter> search_pulse#PulseFirst()
+
+if get(g:, 'vim_search_pulse_disable_auto_extended_mappings') != 0
+  finish
+endif
+
+nmap <c-o> <c-o><Plug>Pulse
+nmap <c-i> <c-i><Plug>Pulse
+nmap G G<Plug>Pulse
+nmap H H<Plug>Pulse
+nmap M M<Plug>Pulse
+nmap L L<Plug>Pulse
+nmap ( (<Plug>Pulse
+nmap ) )<Plug>Pulse
+nmap [[ [[<Plug>Pulse
+nmap ]] ]]<Plug>Pulse
+nmap `[ `[<Plug>Pulse
+nmap `] `]<Plug>Pulse
+nmap { {<Plug>Pulse
+nmap } }<Plug>Pulse
+nmap zj zj<Plug>Pulse
+nmap zk zk<Plug>Pulse
