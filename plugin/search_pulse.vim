@@ -12,6 +12,10 @@ nnoremap
       \ <silent>
       \ <SID>Pulse :call search_pulse#Pulse()<cr>
 
+if !has_key(g:, 'vim_search_pulse_disable_if_same_line_pattern')
+    let g:vim_search_pulse_disable_if_same_line_pattern = 1
+endif
+
 if get(g:, 'vim_search_pulse_disable_auto_mappings') != 0
   finish
 endif

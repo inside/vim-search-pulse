@@ -32,6 +32,10 @@ or just the search pattern:
 
     let g:vim_search_pulse_mode = 'pattern'
 
+and whether or not to allow not pulsing the same pattern/line (1 is default)
+
+    let g:vim_search_pulse_disable_if_same_line_pattern = 1
+
 If you want to set your own mappings, do:
 
     let g:vim_search_pulse_disable_auto_mappings = 1
@@ -50,6 +54,7 @@ The pulse duration is 200 milliseconds by default. You can set your own using
 the following global variable. For example:
 
     let g:vim_search_pulse_duration = 400
+
 
 The colors used by the pulse are `[237, 238, 239, 240, 241]` (gray scale) by
 default. A color map can be found at:
