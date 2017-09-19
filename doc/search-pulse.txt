@@ -151,6 +151,10 @@ star motions. Here's the configuration:
 ==============================================================================
 4. Commands                                             *SearchPulseCommands*
 
+:Pulse                                                               *:Pulse*
+
+Pulse the current line.
+
 :SearchPulseToggle                                       *:SearchPulseToggle*
 
 Easily switch the search pulse on and off.
