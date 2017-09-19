@@ -11,7 +11,7 @@ nnoremap
 nnoremap
       \ <silent>
       \ <SID>Pulse :call search_pulse#Pulse()<cr>
-command -nargs=0 Pulse :call search_pulse#Pulse()
+command! -nargs=0 Pulse :call search_pulse#Pulse()
 
 if get(g:, 'vim_search_pulse_disable_auto_mappings') != 0
   finish
