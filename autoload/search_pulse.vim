@@ -62,7 +62,7 @@ endf
 func! search_pulse#PulseFirst()
   let t = getcmdtype()
 
-  if t == '/' || t == '?'
+  if state() != "o" && (t == '/' || t == '?')
     return "\<cr>:call search_pulse#Pulse()\<cr>"
   endif
 
