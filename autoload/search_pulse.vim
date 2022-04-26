@@ -60,9 +60,12 @@ endf
 
 " Will pulse the cursor line on first search match using / or ?
 func! search_pulse#PulseFirst()
+  " state() doesn't exist on nvim
+  if has('nvim') | return "\<cr>" | endif
+
   let t = getcmdtype()
 
-  if t == '/' || t == '?'
+  if state() != "o" && (t == '/' || t == '?')
     return "\<cr>:call search_pulse#Pulse()\<cr>"
   endif
 
